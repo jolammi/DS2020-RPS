@@ -3,7 +3,7 @@ import threading
 import tkinter
 import time
 
-global s, serverPort, data, addr
+global s, ss, serverPort, data, addr
 
 jouninIP = "192.168.43.131"
 ownIP = "192.168.43.78"
@@ -28,11 +28,13 @@ def client_thread():
      s.close()
 
 def server_thread():
-     s.bind((ownIP, serverPort))
-     s.listen(1)
-     while true:
+     global s, ss, serverPort, ownIP
+
+     ss.bind((ownIP, serverPort))
+     ss.listen(1)
+     while True:
           try:
-               conn, addr = s.accept()
+               conn, addr = ss.accept()
                seReceive = conn.recv(BUFFER_SIZE);
                if not data:
                     continue
@@ -44,12 +46,16 @@ def server_thread():
           time.sleep(0.1)
 
 def main():
-     global s
+     global s,ss
+     ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
      s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
      ct = threading.Thread(target = client_thread)
+     st = threading.Thread(target = server_thread)
      ct.start()
+     st.start()
      ct.join()
-     while true:
+     st.join()
+     while True:
           time.sleep(1)
 
 main()
