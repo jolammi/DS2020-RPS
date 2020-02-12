@@ -5,8 +5,8 @@ import time
 
 global s, ss, serverPort, data, addr
 
-jouninIP = "192.168.43.131"
-ownIP = "192.168.43.78"
+ownIP = "192.168.43.131"
+jouninIP = "192.168.43.78"
 serverPort = 5005
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 
@@ -49,11 +49,11 @@ def main():
      global s,ss
      ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
      s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-     ct = threading.Thread(target = client_thread)
+     # ct = threading.Thread(target = client_thread)
      st = threading.Thread(target = server_thread)
-     ct.start()
+     # ct.start()
      st.start()
-     ct.join()
+     # ct.join()
      st.join()
      while True:
           time.sleep(1)
