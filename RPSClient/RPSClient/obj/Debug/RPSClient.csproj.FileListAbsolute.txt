@@ -1,0 +1,10 @@
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\bin\Debug\RPSClient.exe.config
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\bin\Debug\RPSClient.exe
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\bin\Debug\RPSClient.pdb
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\obj\Debug\RPSClient.csprojAssemblyReference.cache
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\obj\Debug\RPSClient.Form1.resources
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\obj\Debug\RPSClient.Properties.Resources.resources
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\obj\Debug\RPSClient.csproj.GenerateResource.cache
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\obj\Debug\RPSClient.csproj.CoreCompileInputs.cache
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\obj\Debug\RPSClient.exe
+D:\Users\Moderator.DESKTOP-QGUCUGO\source\repos\RPSClient\RPSClient\obj\Debug\RPSClient.pdb
