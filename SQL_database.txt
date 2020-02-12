@@ -1,0 +1,32 @@
+CREATE TABLE Player (
+  id INT PRIMARY KEY NOT NULL,
+  username STRING(20) UNIQUE NOT NULL,
+  ip STRING(15) UNIQUE NOT NULL,
+);
+
+CREATE TABLE Gameroom (
+  id INT NOT NULL,
+  player_id INT NOT NULL,
+  player_score INT NOT NULL DEFAULT 0??????
+  PRIMARY KEY (id, player_id),
+  FOREIGN KEY (player_id) REFERENCES Player(id)
+);
+
+
+/////////////////////////////////////////////////// correct below
+
+CREATE TABLE Player (
+  player_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  username VARCHAR(20) NOT NULL UNIQUE,
+  ip VARCHAR(15) NOT NULL UNIQUE
+);
+
+CREATE TABLE Gameroom (
+  id INT NOT NULL,
+  player_id INT NOT NULL,
+  player_score INT NOT NULL DEFAULT 0,
+  FOREIGN KEY (player_id) REFERENCES Player(player_id),
+  PRIMARY KEY (id, player_id)
+);
+
+Database name DS2020
