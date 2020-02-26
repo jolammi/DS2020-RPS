@@ -5,7 +5,7 @@ import time
 
 global s, ss, serverPort, data, addr
 
-ownIP = "192.168.43.131"
+ownIP = "192.168.43.112"
 jouninIP = "192.168.43.78"
 serverPort = 5005
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
