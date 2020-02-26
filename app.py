@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
-engine = db.create_engine("sqlite:///matti.db", echo=True)
+engine = db.create_engine("sqlite:///DS2020-RPS.db", echo=True)
 
 connection = engine.connect()
 # metadata = db.MetaData()
@@ -50,8 +50,9 @@ gr4 = Gameroom(gameroom_id=2, player_id=1, player_score=77)
 gr5 = Gameroom(gameroom_id=3, player_id=5, player_score=1500)
 
 Session = sessionmaker(bind=engine)
-
 session = Session()
+
+
 session.add(matti)
 session.add(matti2)
 session.add(matti3)
