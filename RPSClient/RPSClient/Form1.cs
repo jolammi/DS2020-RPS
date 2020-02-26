@@ -233,5 +233,21 @@ namespace RPSClient
                     }
             }
         }
+
+        private void acceptButton_Click(object sender, EventArgs e)
+        {
+            if (aliasBox.Text.Length <= 0 || aliasBox.Text == "Username" || IPBox.Text.Length <= 0 || IPBox.Text == "IP")
+            {
+                errorLabel.Text = "Your Info was not entered properly. Please enter again.";
+            }
+            else
+            {
+                alias = aliasBox.Text;
+                ip = IPBox.Text;
+                TcpStart(ip, alias);
+                ScreenChanger(1);
+
+            }
+        }
     }
 }

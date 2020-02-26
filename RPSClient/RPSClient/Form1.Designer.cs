@@ -44,10 +44,9 @@
             // 
             this.createButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.createButton.Location = new System.Drawing.Point(389, 270);
-            this.createButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.createButton.Location = new System.Drawing.Point(259, 175);
             this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(108, 35);
+            this.createButton.Size = new System.Drawing.Size(72, 23);
             this.createButton.TabIndex = 17;
             this.createButton.Text = "New Room";
             this.createButton.UseVisualStyleBackColor = true;
@@ -56,10 +55,9 @@
             // 
             this.quitButton1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.quitButton1.Location = new System.Drawing.Point(281, 340);
-            this.quitButton1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.quitButton1.Location = new System.Drawing.Point(187, 221);
             this.quitButton1.Name = "quitButton1";
-            this.quitButton1.Size = new System.Drawing.Size(108, 35);
+            this.quitButton1.Size = new System.Drawing.Size(72, 23);
             this.quitButton1.TabIndex = 16;
             this.quitButton1.Text = "Quit";
             this.quitButton1.UseVisualStyleBackColor = true;
@@ -67,10 +65,9 @@
             // joinButton
             // 
             this.joinButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.joinButton.Location = new System.Drawing.Point(169, 270);
-            this.joinButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.joinButton.Location = new System.Drawing.Point(113, 175);
             this.joinButton.Name = "joinButton";
-            this.joinButton.Size = new System.Drawing.Size(112, 35);
+            this.joinButton.Size = new System.Drawing.Size(75, 23);
             this.joinButton.TabIndex = 15;
             this.joinButton.Text = "Join";
             this.joinButton.UseVisualStyleBackColor = true;
@@ -81,10 +78,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dontPushLink.AutoSize = true;
             this.dontPushLink.LinkColor = System.Drawing.Color.Black;
-            this.dontPushLink.Location = new System.Drawing.Point(260, 468);
-            this.dontPushLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.dontPushLink.Location = new System.Drawing.Point(173, 304);
             this.dontPushLink.Name = "dontPushLink";
-            this.dontPushLink.Size = new System.Drawing.Size(166, 20);
+            this.dontPushLink.Size = new System.Drawing.Size(114, 13);
             this.dontPushLink.TabIndex = 14;
             this.dontPushLink.TabStop = true;
             this.dontPushLink.Text = "Please do not click me";
@@ -95,10 +91,9 @@
             this.errorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.errorLabel.AutoSize = true;
-            this.errorLabel.Location = new System.Drawing.Point(130, 347);
-            this.errorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.errorLabel.Location = new System.Drawing.Point(87, 226);
             this.errorLabel.Name = "errorLabel";
-            this.errorLabel.Size = new System.Drawing.Size(0, 20);
+            this.errorLabel.Size = new System.Drawing.Size(0, 13);
             this.errorLabel.TabIndex = 13;
             // 
             // roomListBox
@@ -106,21 +101,18 @@
             this.roomListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.roomListBox.FormattingEnabled = true;
-            this.roomListBox.ItemHeight = 20;
-            this.roomListBox.Location = new System.Drawing.Point(169, 52);
-            this.roomListBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.roomListBox.Location = new System.Drawing.Point(113, 34);
             this.roomListBox.Name = "roomListBox";
-            this.roomListBox.Size = new System.Drawing.Size(328, 184);
+            this.roomListBox.Size = new System.Drawing.Size(220, 121);
             this.roomListBox.Sorted = true;
             this.roomListBox.TabIndex = 12;
             // 
             // quitButton
             // 
             this.quitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.quitButton.Location = new System.Drawing.Point(528, 382);
-            this.quitButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.quitButton.Location = new System.Drawing.Point(352, 248);
             this.quitButton.Name = "quitButton";
-            this.quitButton.Size = new System.Drawing.Size(112, 35);
+            this.quitButton.Size = new System.Drawing.Size(75, 23);
             this.quitButton.TabIndex = 10;
             this.quitButton.Text = "Quit";
             this.quitButton.UseVisualStyleBackColor = true;
@@ -128,22 +120,21 @@
             // acceptButton
             // 
             this.acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.acceptButton.Location = new System.Drawing.Point(528, 311);
-            this.acceptButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.acceptButton.Location = new System.Drawing.Point(352, 202);
             this.acceptButton.Name = "acceptButton";
-            this.acceptButton.Size = new System.Drawing.Size(112, 35);
+            this.acceptButton.Size = new System.Drawing.Size(75, 23);
             this.acceptButton.TabIndex = 9;
             this.acceptButton.Text = "Accept";
             this.acceptButton.UseVisualStyleBackColor = true;
+            this.acceptButton.Click += new System.EventHandler(this.acceptButton_Click);
             // 
             // aliasBox
             // 
             this.aliasBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.aliasBox.Location = new System.Drawing.Point(169, 316);
-            this.aliasBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.aliasBox.Location = new System.Drawing.Point(113, 205);
             this.aliasBox.Name = "aliasBox";
-            this.aliasBox.Size = new System.Drawing.Size(328, 26);
+            this.aliasBox.Size = new System.Drawing.Size(220, 20);
             this.aliasBox.TabIndex = 11;
             this.aliasBox.Text = "Username";
             // 
@@ -151,18 +142,17 @@
             // 
             this.IPBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.IPBox.Location = new System.Drawing.Point(169, 352);
-            this.IPBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.IPBox.Location = new System.Drawing.Point(113, 229);
             this.IPBox.Name = "IPBox";
-            this.IPBox.Size = new System.Drawing.Size(328, 26);
+            this.IPBox.Size = new System.Drawing.Size(220, 20);
             this.IPBox.TabIndex = 18;
             this.IPBox.Text = "IP";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 594);
+            this.ClientSize = new System.Drawing.Size(456, 386);
             this.Controls.Add(this.IPBox);
             this.Controls.Add(this.createButton);
             this.Controls.Add(this.quitButton1);
@@ -173,10 +163,9 @@
             this.Controls.Add(this.aliasBox);
             this.Controls.Add(this.quitButton);
             this.Controls.Add(this.acceptButton);
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.MinimumSize = new System.Drawing.Size(600, 600);
+            this.MinimumSize = new System.Drawing.Size(405, 404);
             this.Name = "Form1";
-            this.Padding = new System.Windows.Forms.Padding(2);
+            this.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
             this.Text = "s";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
