@@ -35,8 +35,8 @@ def server_thread():
      while True:
           try:
                conn, addr = ss.accept()
-               seReceive = conn.recv(BUFFER_SIZE);
-               if not data:
+               seReceive = conn.recv(BUFFER_SIZE)
+               if not seReceive:
                     continue
                print("Received data" + seReceive + "to" + addr)
                conn.send("OK")
