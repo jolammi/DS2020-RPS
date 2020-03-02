@@ -360,3 +360,18 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+
+*.vscode
+RPSClient/.vs/ProjectSettings.json
+RPSClient/.vs/RPSClient/v16/.suo
+RPSClient/.vs/RPSClient/v16/Server/sqlite3/db.lock
+RPSClient/.vs/RPSClient/v16/Server/sqlite3/storage.ide-wal
+RPSClient/.vs/RPSClient/v16/.suo
+RPSClient/.vs/RPSClient/v16/Server/sqlite3/storage.ide-shm
+RPSClient/.vs/slnx.sqlite
+RPSClient/RPSClient/obj/Debug/RPSClient.csprojAssemblyReference.cache
+RPSClient/.vs/RPSClient/v16/.suo
+RPSClient/RPSClient/obj/Debug/RPSClient.csprojAssemblyReference.cache
+RPSClient/.vs/slnx.sqlite
+RPSClient/.vs/RPSClient/v16/.suo

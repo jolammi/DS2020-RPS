@@ -44,22 +44,6 @@ namespace RPSClient
             Application.Exit();
         }
 
-        private void AcceptButtonClick(object sender, EventArgs e)
-        {
-            if (aliasBox.Text.Length <= 0 || aliasBox.Text == "Username" || IPBox.Text.Length <= 0 || IPBox.Text == "IP")
-            {
-                errorLabel.Text = "Your Info was not entered properly. Please enter again.";
-            }
-            else
-            {
-                alias = aliasBox.Text;
-                ip = IPBox.Text;
-                TcpStart(ip, alias);
-                ScreenChanger(1);
-
-            }
-        }
-
         public void ScreenChanger(int screenOrder)
         {
             switch (screenOrder)
@@ -133,7 +117,7 @@ namespace RPSClient
             popup.Show();
         }
 
-        public void TcpStart(string ip, string alias)
+        public Tuple<NetworkStream, TcpClient> TcpStart(string ip, string alias)
         {
             while (true)
             {
@@ -142,17 +126,14 @@ namespace RPSClient
                     errorLabel.Text = "Searching Connection...";
                     TcpClient client = new TcpClient(ip, _port);
                     NetworkStream stream = client.GetStream();
-                    //Thread sendingThread = new Thread(() => SendThread(client, stream));
-                    //Thread receivingThread = new Thread(() => ReceiveThread(client, stream));
-                    //sendingThread.Start();
-                    //receivingThread.Start();
-                    //Tuple<NetworkStream, TcpClient> tuple = new Tuple<NetworkStream, TcpClient>(stream, client);
-                    dataStruct = new Tuple<string, string>("alias", alias);
-                    var message = System.Text.Encoding.ASCII.GetBytes(dataStruct.Item1 + " " + dataStruct.Item2);
-                    stream.Write(message, 0, message.Length);
-                    //return tuple;
+                    Thread sendingThread = new Thread(() => SendThread(client, stream));
+                    Thread receivingThread = new Thread(() => ReceiveThread(client, stream));
+                    sendingThread.Start();
+                    receivingThread.Start();
+                    Tuple<NetworkStream, TcpClient> tuple = new Tuple<NetworkStream, TcpClient>(stream, client);
+                    return tuple;
                     //receivingThread.Join();
-                    //sendingThread.Join();/
+                    //sendingThread.Join();
                 }
                 catch (SocketException e)
                 {
@@ -185,7 +166,7 @@ namespace RPSClient
 
         public void ReceiveThread(TcpClient client, NetworkStream stream)
         {
-            byte[] data = new byte[1024];
+            byte[] data = new byte[512];
             while (true)
             {
                 try
@@ -195,7 +176,7 @@ namespace RPSClient
                 }
                 catch (SocketException e)
                 {
-                    client.Close();
+                    //client.Close();
                 }
             }
         }
