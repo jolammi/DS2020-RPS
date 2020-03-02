@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace RPSClient
 {
@@ -117,21 +118,20 @@ namespace RPSClient
             popup.Show();
         }
 
-        public Tuple<NetworkStream, TcpClient> TcpStart(string ip, string alias)
+        public void TcpStart(string ip, string alias)
         {
             while (true)
             {
                 try
                 {
-                    errorLabel.Text = "Searching Connection...";
                     TcpClient client = new TcpClient(ip, _port);
                     NetworkStream stream = client.GetStream();
+                    Debug.Write("Connection started");
                     Thread sendingThread = new Thread(() => SendThread(client, stream));
                     Thread receivingThread = new Thread(() => ReceiveThread(client, stream));
                     sendingThread.Start();
                     receivingThread.Start();
-                    Tuple<NetworkStream, TcpClient> tuple = new Tuple<NetworkStream, TcpClient>(stream, client);
-                    return tuple;
+                    break;
                     //receivingThread.Join();
                     //sendingThread.Join();
                 }
@@ -150,7 +150,7 @@ namespace RPSClient
                 try
                 {
                     if (firstTime == true)
-                        FirstTime(firstTime, stream);
+                        FirstTime(stream);
                     else
                     {
                         if (newCommandFlag == true)
@@ -159,6 +159,7 @@ namespace RPSClient
                 }
                 catch (SocketException e)
                 {
+                    Debug.Write("SockerEception: " + e);
                     client.Close();
                 }
             }
@@ -181,7 +182,7 @@ namespace RPSClient
             }
         }
 
-        public void FirstTime(bool firstTime, NetworkStream stream)
+        public void FirstTime(NetworkStream stream)
         {
             dataStruct = new Tuple<string, string>("alias", alias);
             var message = System.Text.Encoding.ASCII.GetBytes(dataStruct.Item1 + " " + dataStruct.Item2);
@@ -225,9 +226,9 @@ namespace RPSClient
             {
                 alias = aliasBox.Text;
                 ip = IPBox.Text;
-                TcpStart(ip, alias);
+                Thread TcpThread = new Thread(() => TcpStart(ip, alias));
+                TcpThread.Start();
                 ScreenChanger(1);
-
             }
         }
     }
