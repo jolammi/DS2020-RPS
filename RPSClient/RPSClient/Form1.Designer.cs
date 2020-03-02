@@ -135,6 +135,7 @@
             this.acceptButton.TabIndex = 9;
             this.acceptButton.Text = "Accept";
             this.acceptButton.UseVisualStyleBackColor = true;
+            this.acceptButton.Click += new System.EventHandler(this.acceptButton_Click);
             // 
             // aliasBox
             // 
