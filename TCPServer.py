@@ -1,6 +1,6 @@
 import socket
 
-TCP_IP = '192.168.43.78'
+TCP_IP = '172.20.10.2'
 TCP_PORT = 5005
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
  
@@ -16,7 +16,7 @@ while 1:
           data = conn.recv(BUFFER_SIZE)
           #if not data: break
           print (data.decode())
-          data = "Haist sie"
+          data = "Gamerooms: GameRoom1, GameRoom2, GameRoom3"
           conn.send(data.encode())
      except OSError:
           continue
