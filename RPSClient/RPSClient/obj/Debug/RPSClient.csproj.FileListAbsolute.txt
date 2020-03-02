@@ -30,3 +30,14 @@ C:\Users\ollio\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClie
 C:\Users\ollio\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.csproj.GenerateResource.cache
 C:\Users\ollio\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.exe
 C:\Users\ollio\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.pdb
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\bin\Debug\RPSClient.exe.config
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\bin\Debug\RPSClient.exe
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\bin\Debug\RPSClient.pdb
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.csprojAssemblyReference.cache
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.Form1.resources
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.Form2.resources
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.Form3.resources
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.Properties.Resources.resources
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.csproj.GenerateResource.cache
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.exe
+C:\Users\Moderator\Documents\GitHub\DS2020-RPS\RPSClient\RPSClient\obj\Debug\RPSClient.pdb
