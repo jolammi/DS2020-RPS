@@ -25,9 +25,9 @@ while 1:
         if split_data[0] == "alias":
             data = "Gamerooms: GameRoom1, GameRoom2, GameRoom3"
         elif split_data[0] == "join":
-            data = "Count: " + countDown
+            data = "Response: Joined"
         elif split_data[0] == "answer":
-            
+
         conn.send(data.encode())
     except OSError:
         continue
