@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import argparse
-from app import Base, engine, connection, Player, Gameroom
+from app import Base, engine, connection, Player, Gameroom, session
 import socket
 from threading import Thread, Lock
 import atexit
+import time
 
 # TCP_IP = 'localhost'
 # TCP_PORT = 5005
@@ -34,25 +35,26 @@ class ClientThread(Thread):
             "[+] New server socket thread started for " +
             ip + ":" + str(port)
         )
+        # tallenna tietokantaan IP ja alias
 
     def run(self):
         while True:
 
-            data = self.conn.recv(2048)
+            data, address = sock.recvfrom(1024)
             print(data)
+            data = RPSGame.read_message(data, address)
 
-# When player starts the client it sends ->
-# alias: "player_name"
+        # When player starts the client it sends ->
+        # alias: "player_name"
 
-# Player joins automatically to the room
+        # Player joins automatically to the room
 
-# When rps is chosen
-# answer: "rock"
+        # When rps is chosen
+        # answer: "rock"
 
-# Server sends either  (winners) Outcome: "olli", "Jouni"
-# and Countdown: "33"
+        # Server sends either  (winners) Outcome: "olli", "Jouni"
+        # and Countdown: "33"
 
-        #
             self.conn.send(data)  # echo
 
 
@@ -86,8 +88,13 @@ def main_loop(tcp_ip, tcp_port):
     tcp_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     tcp_server.bind((tcp_ip, int(tcp_port)))
 
+    # Start timer
+
     global threads
+    global round_answers
+    round_answers = []
     threads = []
+    timer_thread =
     listen_thread = ListenForUsersThread(tcp_server)
     listen_thread.start()
     threads.append(listen_thread)
@@ -100,66 +107,112 @@ def main_loop(tcp_ip, tcp_port):
 def close_socket():
     socket.close()
 
-class RPSserver(Thread):
+
+
+class TimerThread(Thread):
+
+    def __init__(self):
+        Thread.__init__(self)
+        self.time = 30
+        self.round_over = False
+        print("Timer thread started")
+
+    def send_time():
+        '''sends timer in 10 sec periods'''
+        while(1):
+            time.sleep(1)
+            self.time -= 1
+            if self.time <= 0:
+                self.round_over = True
+                self.time = 30
+                time.sleep(10)
+                self.round_over = False
+
+
+class RPSGame():
     """Server for RPS game"""
-    def __init__(tcp_ip, tcp_port):
+    def __init__(self):
         '''Start server'''
-        self.TCP_IP = tcp_ip
-        self.TCP_PORT = int(tcp_port)
-
-
-    def accept_player():
-        '''adds the player to the player list'''
         pass
 
+    def accept_player(self, data):
+        '''adds the player to the player list (database)'''
 
-    def get_score_for_player():
+        pass
+
+    def get_score_for_player(self):
         '''fetches score for a player from db'''
         pass
 
-    def update_player_score():
+    def update_player_score(self):
         '''updates player's score according to how the game went'''
         pass
 
-    def play_round():
+    def play_round(self):
         '''sends roundstart, starts timer, waits 60sec and calculates winner'''
         pass
 
-    def wait_for_answers():
+    def wait_for_answers(self):
         '''waits 60s for messages from players'''
         pass
 
-    def get_winner():
+    def send_scores(self, outcome):
+        ''' Send scores of the game Outcome: "alias: 2", "alias2: 0"   '''
+        conn.send(outcome)
+        pass
+
+    def get_winner(self):
         '''Calculates winner from round'''
         pass
 
-    def listen_for_messages():
+    def listen_for_messages(self):
         '''listens for messages from players'''
         pass
 
-    def read_message():
+    def read_message(self, message, ip_address):
         ''' Read message '''
-        pass
+        # alias: "player_name"
 
-    def route_to_another_server():
+        # Player joins automatically to the room
+
+        # When rps is chosen
+        # answer: "rock"
+        message = message.decode()
+        message = message.split(";")
+        message = [datapair.split(":") for datapair in message]
+        message = [[value.strip() for value in sublist] for sublist in message2
+        data = {str(sublist[0]): str(sublist[1]) for sublist in message2}
+        try:
+            if "msgtype" in data:
+                if data["msgtype"] == "connect":
+                    user = Player(username=data["alias"], ip=ip_address)
+                    session.add(user)
+                    session.commit()
+
+                if data["msgtype"] == "play":
+                    round_answers.append({data["alias"]: data["answer"]})
+
+
+        except KeyError:
+            print("Unhandled exception")
+
+    def route_to_another_server(self):
         '''routes the message to the replica server'''
         pass
 
-    def
-
-    def create_room():
+    def create_room(self):
         '''Create room'''
         pass
 
-    def delete_room():
+    def delete_room(self):
         '''delete a room'''
         pass
 
-    def join_room():
+    def join_room(self):
         '''joins the player that sent the message to a room'''
         pass
 
-    def leave_room():
+    def leave_room(self):
         '''removes the player from a room'''
         pass
 

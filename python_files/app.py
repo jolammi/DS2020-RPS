@@ -10,6 +10,9 @@ connection = engine.connect()
 
 print(engine.table_names())
 
+Session = sessionmaker(bind=engine)
+session = Session()
+
 
 class Player(Base):
     __tablename__ = 'player'
@@ -29,7 +32,6 @@ class Gameroom(Base):
         primary_key=True,
     )
     player_score = db.Column(db.Integer, nullable=False)
-
     player = relationship("Player", back_populates="gameroom")
 
 
