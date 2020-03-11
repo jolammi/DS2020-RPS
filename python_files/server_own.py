@@ -52,6 +52,7 @@ class ClientThread(Thread):
 # Server sends either  (winners) Outcome: "olli", "Jouni"
 # and Countdown: "33"
 
+        #
             self.conn.send(data)  # echo
 
 
@@ -134,6 +135,10 @@ class RPSserver(Thread):
 
     def listen_for_messages():
         '''listens for messages from players'''
+        pass
+
+    def read_message():
+        ''' Read message '''
         pass
 
     def route_to_another_server():
