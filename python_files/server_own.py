@@ -3,8 +3,7 @@ import argparse
 from app import Base, engine, connection, Player, Gameroom
 import socket
 from threading import Thread, Lock
-
-
+import atexit
 
 # TCP_IP = 'localhost'
 # TCP_PORT = 5005
@@ -23,41 +22,95 @@ from threading import Thread, Lock
 #     conn.send(data)  # echo
 # conn.close()
 
-def main_loop():
-    lock = Lock()
-    rps_server = RPSserver(tcp_port, rooms, lock)
-    rps_server.start()
+
+class ClientThread(Thread):
+
+    def __init__(self, ip, port, conn):
+        Thread.__init__(self)
+        self.ip = ip
+        self.port = port
+        self.conn = conn
+        print(
+            "[+] New server socket thread started for " +
+            ip + ":" + str(port)
+        )
+
+    def run(self):
+        while True:
+
+            data = self.conn.recv(2048)
+            print(data)
+
+# When player starts the client it sends ->
+# alias: "player_name"
+
+# Player joins automatically to the room
+
+# When rps is chosen
+# answer: "rock"
+
+# Server sends either  (winners) Outcome: "olli", "Jouni"
+# and Countdown: "33"
+
+            self.conn.send(data)  # echo
+
+
+class ListenForUsersThread(Thread):
+
+    def __init__(self, tcp_server):
+        self.tcp_server = tcp_server
+        Thread.__init__(self)
+        print("[+] New server socket thread started for listening for users")
+
+    def run(self):
+        while True:
+            self.tcp_server.listen(20)
+            print("Multithreaded Python server : Waiting for connectionsfrom TCP clients...")
+            (conn, (ip, port)) = self.tcp_server.accept()
+            newthread = ClientThread(ip, port, conn)
+            newthread.start()
+            threads.append(newthread)
+
+
+def main_loop(tcp_ip, tcp_port):
+
+    # rps_server = RPSserver(tcp_ip, tcp_port)
+    #  TCP_IP = '0.0.0.0'
+    # TCP_PORT = 2004
+    # TCP_IP = '192.168.43.75'
+    # TCP_PORT = 5005
+    # BUFFER_SIZE = 20  # Usually 1024, but we need quick response
+
+    tcp_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    tcp_server.bind((tcp_ip, int(tcp_port)))
+
+    global threads
+    threads = []
+    listen_thread = ListenForUsersThread(tcp_server)
+    listen_thread.start()
+    threads.append(listen_thread)
+    # rps_server.start()
     is_running = True
     while is_running:
         pass
 
 
+def close_socket():
+    socket.close()
+
 class RPSserver(Thread):
     """Server for RPS game"""
-    def __init__():
+    def __init__(tcp_ip, tcp_port):
         '''Start server'''
-        pass
+        self.TCP_IP = tcp_ip
+        self.TCP_PORT = int(tcp_port)
 
-    def create_room():
-        '''Create room'''
-        pass
-
-    def delete_room():
-        '''delete a room'''
-        pass
-
-    def join_room():
-        '''joins the player that sent the message to a room'''
-        pass
 
     def accept_player():
         '''adds the player to the player list'''
         pass
 
-
-    def leave_room():
-        '''removes the player from a room'''
-        pass
 
     def get_score_for_player():
         '''fetches score for a player from db'''
@@ -89,23 +142,44 @@ class RPSserver(Thread):
 
     def
 
+    def create_room():
+        '''Create room'''
+        pass
+
+    def delete_room():
+        '''delete a room'''
+        pass
+
+    def join_room():
+        '''joins the player that sent the message to a room'''
+        pass
+
+    def leave_room():
+        '''removes the player from a room'''
+        pass
 
 
 if __name__ == "__main__":
-    """
+    """rooms, lock
     Start a game server
     """
-    parser = argparse.ArgumentParser(description='Simple game server')
-    parser.add_argument('--tcpport',
+    parser = argparse.ArgumentParser(description='Server of RPS')
+    parser.add_argument('--TCP_IP',
+                        dest='tcp_ip',
+                        help='Own TCP IP',
+                        default="0.0.0.0")
+
+    parser.add_argument('--TCP_PORT',
                         dest='tcp_port',
-                        help='Listening tcp port',
-                        default="1234")
-
-    parser.add_argument('--capacity',
-                        dest='room_capacity',
-                        help='Max players per room',
-                        default="2")
-
+                        help='Own tcp port',
+                        default=5005)
     args = parser.parse_args()
-    rooms = Rooms(int(args.room_capacity))
-    main_loop(args.tcp_port, rooms)
+    atexit.register(close_socket)
+    main_loop(args.tcp_ip, args.tcp_port)
+
+
+
+
+    # https://www.techbeamers.com/python-tutorial-write-multithreaded-python-server/
+    # https://stackoverflow.com/questions/10810249/python-socket-multiple-clients
+    # https://www.geeksforgeeks.org/socket-programming-multi-threading-python/
