@@ -17,26 +17,33 @@ namespace RPSClient
     {
         public string alias;
         public string ip;
-        public static string roomName;
-        public static string createdRoom;
 
         public int _port = 5005;
         public static string PSA;
 
         public static bool newCommandFlag = false;
         public static bool firstTime = true;
+        public bool newCountdown = false;
+        public bool newOutcome = false;
 
-        public static Tuple<string, string> dataStruct;
+        public string countData = null;
+        public string outcomeData = null;
 
-        public Tuple<NetworkStream, TcpClient> TcpTuple; 
+        public static Tuple<string, string> dataStruct = null;
+        public static List<string> roomList = new List<string>();
+
+        public Tuple<NetworkStream, TcpClient> TcpTuple;
 
 
         // 0 = Alias screen // 1 = Room selection screen // 2 = Inside room screen //
-        public int screenOrder = 0;
+        public static int screenOrder = 0;
 
         public Form1()
         {
             InitializeComponent();
+            Thread updateThread = new Thread(() => Update());
+            updateThread.Start();
+            updateThread.Join();
             ScreenChanger(0);
         }
 
@@ -51,32 +58,36 @@ namespace RPSClient
             {
                 case 0:
                     {
-                        aliasBox.Show();
-                        acceptButton.Show();
-                        quitButton.Show();
 
-                        joinButton.Hide();
-                        createButton.Hide();
-                        quitButton1.Hide();
-                        roomListBox.Hide();
+                        aliasBox.Show();
+                        IPBox.Show();
+                        acceptButton.Show();
+                        quitButton1.Show();
+
+                        countLabel.Hide();
+                        outcomeLabel.Hide();
+                        quitButton.Hide();
+                        rockButton.Hide();
+                        paperButton.Hide();
+                        scissorButton.Hide();
                         break;
                     }
                 case 1:
                     {
-                        joinButton.Show();
-                        createButton.Show();
-                        quitButton1.Show();
-                        roomListBox.Show();
+                        countLabel.Show();
+                        outcomeLabel.Show();
+                        rockButton.Show();
+                        paperButton.Show();
+                        scissorButton.Show();
+                        aliasBox.Show();
+                        IPBox.Show();
+                        acceptButton.Show();
+                        quitButton.Show();
 
                         aliasBox.Hide();
+                        IPBox.Hide();
                         acceptButton.Hide();
-                        quitButton.Hide();
-                        errorLabel.Hide();
-                        errorLabel.ResetText();
-                        break;
-                    }
-                case 2:
-                    {
+                        quitButton1.Hide();
                         break;
                     }
             }
@@ -87,22 +98,6 @@ namespace RPSClient
             System.Diagnostics.Process.Start("https://media.giphy.com/media/PApKgKr6r20mc/giphy.gif");
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void quitButton1_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void joinButton_Click(object sender, EventArgs e)
-        {
-            roomName = roomListBox.SelectedItem.ToString();
-            ScreenChanger(2);
-        }
-
         private void aliasBox_Click(object sender, EventArgs e)
         {
             errorLabel.ResetText();
@@ -111,13 +106,6 @@ namespace RPSClient
                 aliasBox.ResetText();
             }
         }
-
-        private void createButton_Click(object sender, EventArgs e)
-        {
-            Form2 popup = new Form2();
-            popup.Show();
-        }
-
         public void TcpStart(string ip, string alias)
         {
             while (true)
@@ -135,9 +123,9 @@ namespace RPSClient
                     //receivingThread.Join();
                     //sendingThread.Join();
                 }
-                catch (SocketException e)
+                catch (Exception ex)
                 {
-                    errorLabel.Text = e.ToString();
+                    errorLabel.Text = ex.ToString();
                 }
             }
         }
@@ -146,7 +134,6 @@ namespace RPSClient
         {
             while (true)
             {
-                PSA = "Searching message...";
                 try
                 {
                     if (firstTime == true)
@@ -154,14 +141,14 @@ namespace RPSClient
                     else
                     {
                         if (newCommandFlag == true)
-                            NewCommand();
+                            NewCommand(stream);
                     }
                 }
-                catch (SocketException e)
+                catch (Exception ex)
                 {
-                    Debug.Write("SockerEception: " + e);
-                    client.Close();
+                    Debug.Write("Eception: " + ex);
                 }
+                Thread.Sleep(1);
             }
         }
 
@@ -173,47 +160,64 @@ namespace RPSClient
                 try
                 {
                     int respLength = stream.Read(data, 0, data.Length);
-                    string stringData = Encoding.ASCII.GetString(data, 0, respLength);
+                    string stringData = Encoding.ASCII.GetString(data, 0, respLength);                   
+                    Debug.Write(stringData);
+                    string[] splitter = {": "};
+                    string[] splitter2 = {", "};
+                    string[] splitData = stringData.Split(splitter, System.StringSplitOptions.RemoveEmptyEntries);
+                    if (splitData[0] == "Outcome")
+                    {
+                        string[] splittedPlayers = splitData[1].Split(splitter2, System.StringSplitOptions.RemoveEmptyEntries);
+                        int i;
+                        for(i = 0; i <= splittedPlayers.Length - 1; i++)
+                        {
+                            if(splittedPlayers[i] ==  alias)
+                            {
+                                outcomeData = "You Won!";
+                            }
+                            else if(i == splittedPlayers.Length - 1 && splittedPlayers[i] != alias)
+                            {
+                                outcomeData = "You Lost!";
+                            }
+                            newOutcome = true;
+                        }
+                    }
+                    else if(splitData[0] == "Countdown")
+                    {
+                        countData = splitData[1] + " !";
+                        newCountdown = true;
+                    }
                 }
-                catch (SocketException e)
+                catch (Exception ex)
                 {
                     //client.Close();
                 }
+                Thread.Sleep(1);
             }
         }
 
         public void FirstTime(NetworkStream stream)
         {
             dataStruct = new Tuple<string, string>("alias", alias);
-            var message = System.Text.Encoding.ASCII.GetBytes(dataStruct.Item1 + " " + dataStruct.Item2);
+            var message = System.Text.Encoding.ASCII.GetBytes(dataStruct.Item1 + ": " + dataStruct.Item2);
             stream.Write(message, 0, message.Length);
             firstTime = false;
             PSA = "First time is used";
         }
 
-        public void NewCommand()
+        public void NewCommand(NetworkStream stream)
         {
             switch (dataStruct.Item1)
             {
                 // Rock / Paper / Scissors //
-                case "response":
+                case "answer":
                     {
-
-                        break;
-                    }
-                // Player name //
-                case "alias":
-                    {
-
-                        break;
-                    }
-                // Creating new room //
-                case "newRoom":
-                    {
-
+                        var message = System.Text.Encoding.ASCII.GetBytes(dataStruct.Item1 + ": " + dataStruct.Item2);
+                        stream.Write(message, 0, message.Length);
                         break;
                     }
             }
+            newCommandFlag = false;
         }
 
         private void acceptButton_Click(object sender, EventArgs e)
@@ -226,10 +230,45 @@ namespace RPSClient
             {
                 alias = aliasBox.Text;
                 ip = IPBox.Text;
-                Thread TcpThread = new Thread(() => TcpStart(ip, alias));
-                TcpThread.Start();
-                ScreenChanger(1);
+                while (true)
+                {
+                    try
+                    {
+                        Thread TcpThread = new Thread(() => TcpStart(ip, alias));
+                        TcpThread.Start();
+                        ScreenChanger(1);
+                        break;
+                    }
+                    catch(Exception ex)
+                    {
+                        errorLabel.Text = "Error: " + ex;
+                    }
+                }
             }
+        }
+
+        private void rockButton_Click(object sender, EventArgs e)
+        {
+            dataStruct = new Tuple<string, string>("answer", "rock");
+            rockButton.Enabled = false;
+            paperButton.Enabled = false;
+            scissorButton.Enabled = false;
+        }
+
+        private void paperButton_Click(object sender, EventArgs e)
+        {
+            dataStruct = new Tuple<string, string>("answer", "paper");
+            rockButton.Enabled = false;
+            paperButton.Enabled = false;
+            scissorButton.Enabled = false;
+        }
+
+        private void scissorButton_Click(object sender, EventArgs e)
+        {
+            dataStruct = new Tuple<string, string>("answer", "scissors");
+            rockButton.Enabled = false;
+            paperButton.Enabled = false;
+            scissorButton.Enabled = false;
         }
     }
 }
