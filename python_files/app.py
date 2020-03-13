@@ -10,6 +10,9 @@ connection = engine.connect()
 
 print(engine.table_names())
 
+Session = sessionmaker(bind=engine)
+session = Session()
+
 
 class Player(Base):
     __tablename__ = 'player'
@@ -29,40 +32,39 @@ class Gameroom(Base):
         primary_key=True,
     )
     player_score = db.Column(db.Integer, nullable=False)
-
     player = relationship("Player", back_populates="gameroom")
 
 
 Base.metadata.create_all(bind=engine)
 
-matti = Player(username="mattiii", ip="192.168.255.1")
+# matti = Player(username="mattiii", ip="192.168.255.1")
 
-matti = Player(username="asdsa", ip="192.168.255.2")
-matti2 = Player(username="matfhgfhtiii", ip="192.168.255.3")
-matti3 = Player(username="gjgjhgjhgj", ip="192.168.255.4")
-matti4 = Player(username="432432432gfdfd", ip="192.168.255.5")
-
-
-gr1 = Gameroom(gameroom_id=1, player_id=1, player_score=20)
-gr2 = Gameroom(gameroom_id=1, player_id=2, player_score=23)
-gr3 = Gameroom(gameroom_id=2, player_id=3, player_score=55)
-gr4 = Gameroom(gameroom_id=2, player_id=1, player_score=77)
-gr5 = Gameroom(gameroom_id=3, player_id=5, player_score=1500)
-
-Session = sessionmaker(bind=engine)
-session = Session()
+# matti = Player(username="asdsa", ip="192.168.255.2")
+# matti2 = Player(username="matfhgfhtiii", ip="192.168.255.3")
+# matti3 = Player(username="gjgjhgjhgj", ip="192.168.255.4")
+# matti4 = Player(username="432432432gfdfd", ip="192.168.255.5")
 
 
-session.add(matti)
-session.add(matti2)
-session.add(matti3)
-session.add(matti4)
-session.add(gr1)
-session.add(gr2)
-session.add(gr3)
-session.add(gr4)
-session.add(gr5)
-session.commit()
+# gr1 = Gameroom(gameroom_id=1, player_id=1, player_score=20)
+# gr2 = Gameroom(gameroom_id=1, player_id=2, player_score=23)
+# gr3 = Gameroom(gameroom_id=2, player_id=3, player_score=55)
+# gr4 = Gameroom(gameroom_id=2, player_id=1, player_score=77)
+# gr5 = Gameroom(gameroom_id=3, player_id=5, player_score=1500)
+
+# Session = sessionmaker(bind=engine)
+# session = Session()
+
+
+# session.add(matti)
+# session.add(matti2)
+# session.add(matti3)
+# session.add(matti4)
+# session.add(gr1)
+# session.add(gr2)
+# session.add(gr3)
+# session.add(gr4)
+# session.add(gr5)
+# session.commit()
 
 
 # res = connection.execute(".tables")
