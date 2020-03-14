@@ -20,7 +20,7 @@ logging.basicConfig(
 
 
 class ClientThread(Thread):
-    """A thread that is created for each client."""
+    """A thread that is created for each client from ListenForUsersThread."""
     def __init__(self, ip, port, conn):
         logging.info("Client thread init")
         Thread.__init__(self)
@@ -65,7 +65,8 @@ class ClientThread(Thread):
         """Send round results to clients"""
         try:
             self.conn.send(round_results.encode())
-            print("Sent round results:", flush=True)
+            logging.info("Sending results to %s", self.ip)
+            print("Sent round results: to", flush=True)
             print([round_results])
             print(round_results, flush=True)
         except OSError:
@@ -84,7 +85,46 @@ class ClientThread(Thread):
         return self.exception
 
 
+
+
+class ListenForUsersThread(Thread):
+    """
+    Listens for TCP connections and assigns a ClientThread for the
+    incoming connection
+    """
+    def __init__(self, tcp_server):
+        self.tcp_server = tcp_server
+        self.exception = None
+        Thread.__init__(self)
+        logging.info("Init ListenForUserThread")
+        print("[+] New server socket thread started for listening for users", flush=True)
+
+    def run(self):
+        while True:
+            try:
+                self.tcp_server.listen(20)
+                print("Multithreaded Python server : Waiting for connections from TCP clients...", flush=True)
+                (conn, (ip, port)) = self.tcp_server.accept()
+                newthread = ClientThread(ip, port, conn)
+                newthread.start()
+                logging.info("New client thread started for %s", ip)
+                threads.append(newthread)
+                client_threads.append(newthread)
+
+            except Exception as e:
+                self.exception = e
+                logging.exception("Exception in ListenForUsersThread")
+                print("exception in ListenForUserThread", flush=True)
+
+    def get_exception(self):
+        return self.exception
+
+
 class TimerThread(Thread):
+    """
+    Acts as the the game round's main clock and sends countdown to
+    client threads.
+    """
     def __init__(self):
         Thread.__init__(self)
         self.time = 30
@@ -123,35 +163,6 @@ class TimerThread(Thread):
         return self.exception
 
 
-class ListenForUsersThread(Thread):
-    def __init__(self, tcp_server):
-        self.tcp_server = tcp_server
-        self.exception = None
-        Thread.__init__(self)
-        logging.info("Init ListenForUserThread")
-        print("[+] New server socket thread started for listening for users", flush=True)
-
-    def run(self):
-
-        while True:
-            try:
-                self.tcp_server.listen(20)
-                print("Multithreaded Python server : Waiting for connections from TCP clients...", flush=True)
-                (conn, (ip, port)) = self.tcp_server.accept()
-                newthread = ClientThread(ip, port, conn)
-                newthread.start()
-                threads.append(newthread)
-                client_threads.append(newthread)
-
-            except Exception as e:
-                self.exception = e
-                logging.exception("Exception in ListenForUsersThread")
-                print("exception in ListenForUserThread", flush=True)
-
-    def get_exception(self):
-        return self.exception
-
-
 class RPSGame():
     """Server for RPS game"""
     def __init__(self):
@@ -160,7 +171,7 @@ class RPSGame():
         pass
 
     def calculate_results(self):
-        '''calculates round results'''
+        '''calculates round results and updates the results to database'''
         global round_results
         global total_points
         total_points = {}
@@ -189,6 +200,7 @@ class RPSGame():
                     player = session.query(Player).filter(Player.username == alias).one()
                     print(player.username)
                     print(player.player_score)
+
                     total_points[str(player.username)] = int(player.player_score)
                     player.player_score += points
                     session.commit()
@@ -197,9 +209,12 @@ class RPSGame():
         round_results = str("Outcome; " + results_table)
         print(round_results, flush=True)
         print(results_table, flush=True)
+        logging.info(round_results)
+        logging.info("total points for last rounds active players: %s", total_points)
+
 
     def handle_message(self, message, ip_address):
-        ''' Read message '''
+        '''Handles message received from a client thread'''
         message = message.decode()
         session = Session()
         try:
@@ -214,29 +229,31 @@ class RPSGame():
                         player = Player(username=data["alias"], ip=ip_address)
                         session.add(player)
                         session.commit()
+                        logging.info("Connect type msg received from %s", ip_address)
+
                         return "connect type msg received"
 
                 if data["msgtype"] == "play":
                     round_answers.append((data["alias"], data["answer"]))
-                    logging.info("play type msg received")
+                    logging.info("play type msg received from %s", ip_address)
                     return "play type msg"
 
         except KeyError:
             print("Missing fields in clients message", flush=True)
-            logging.exception("KeyError in RPSGame")
+            logging.exception("KeyError in RPSGame for ip %s", ip_address)
 
         except IndexError as e:
             print(e, flush=True)
-            logging.exception("IndexError in RPSGame")
+            logging.exception("IndexError in RPSGame for ip %s", ip_address)
             return "Wrong message fields"
 
         except IntegrityError:
             print("integrityerror in db")
-            logging.exception("IntegrityError RPSGame")
+            logging.exception("IntegrityError RPSGame for ip %s", ip_address)
         except Exception as e:
             print(" error", flush=True)
             print(e, flush=True)
-            logging.exception("Exception in RPSGame")
+            logging.exception("Exception in RPSGame for ip %s", ip_address)
             return "error in msg"
 
 
