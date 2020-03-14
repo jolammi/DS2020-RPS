@@ -19,35 +19,6 @@ logging.basicConfig(
 )
 
 
-class IPBroadcastThread(Thread):
-    """Thread for broadbasting the IP via UDP"""
-    def __init__(self, ip, sock):
-        logging.info("IPBroadcast thread init")
-        Thread.__init__(self)
-        self.host_ip = ip
-        self.udp_port = 4801
-        self.key = "IDKEY"
-        self.sock = sock
-
-    def run(self):
-        try:
-            print(self.host_ip)
-            logging.info("IP broadcast starting")
-            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            while True:
-                self.sock.sendto(
-                    self.host_ip.encode(),
-                    (self.host_ip, self.udp_port)
-                )
-                time.sleep(1)
-        except Exception:
-            logging.exception("Error in IP broadcast loop, killing socket")
-            self.sock.close()
-
-
-
-
-
 class ClientThread(Thread):
     """A thread that is created for each client."""
     def __init__(self, ip, port, conn):
@@ -69,12 +40,10 @@ class ClientThread(Thread):
             try:
                 data = self.conn.recv(1024)
                 if data:
-                    # logging.info("Client thread for ip %s received data %s" % self.ip, data)
+                    logging.info("Client thread received data %s", data)
                     print(data.decode(), flush=True)
                     rpsgame = RPSGame()
                     data = rpsgame.handle_message(data, self.ip)
-                    # self.conn.send(data.encode())  # echo
-                    #self.conn.send(data)
 
             except OSError:
                 logging.exception("OSerror in client thread")
@@ -116,7 +85,6 @@ class ClientThread(Thread):
 
 
 class TimerThread(Thread):
-
     def __init__(self):
         Thread.__init__(self)
         self.time = 30
@@ -144,7 +112,6 @@ class TimerThread(Thread):
                     if self.time <= 0:
                         self.round_over = True
 
-
             except Exception as e:
                 print("exception in timer thread", flush=True)
                 self.exception = e
@@ -157,7 +124,6 @@ class TimerThread(Thread):
 
 
 class ListenForUsersThread(Thread):
-
     def __init__(self, tcp_server):
         self.tcp_server = tcp_server
         self.exception = None
@@ -194,12 +160,11 @@ class RPSGame():
         pass
 
     def calculate_results(self):
+        '''calculates round results'''
         global round_results
         global total_points
         total_points = {}
         session = Session()
-
-        '''calculates round results'''
 
         # get all players from the database
         for alias, score in session.query(Player.username, Player.player_id):
@@ -221,10 +186,6 @@ class RPSGame():
                             # if tie or loss
                             points += 0
 
-            # if alias in total_points:
-            #     total_points[alias] += points
-            # else:
-            #     total_points[alias] = points
                     player = session.query(Player).filter(Player.username == alias).one()
                     print(player.username)
                     print(player.player_score)
@@ -237,20 +198,8 @@ class RPSGame():
         print(round_results, flush=True)
         print(results_table, flush=True)
 
-        # kaikkien vastaukset
-        # [('olappi': 'rock'), ('allu': 'paper'), ('samppa': 'rock')]
-        # Ollin kierroksella loopissa
-        # [('allu': 'paper'), ('samppa': 'rock')]
-
-
     def handle_message(self, message, ip_address):
         ''' Read message '''
-        # alias: "player_name"
-
-        # Player joins automatically to the room
-        # msgtype: alias;
-        # When rps is chosen
-        # answer: "rock"
         message = message.decode()
         session = Session()
         try:
@@ -289,12 +238,6 @@ class RPSGame():
             print(e, flush=True)
             logging.exception("Exception in RPSGame")
             return "error in msg"
-
-    def route_to_another_server(self):
-        '''routes the message to the replica server'''
-        pass
-
-
 
 
 def main_loop(tcp_ip, tcp_port):
@@ -366,40 +309,7 @@ if __name__ == "__main__":
     sock.connect(("8.8.8.8", 80))
     host_ip = sock.getsockname()[0]
     print(host_ip)
-
-    # ip_broadcast = IPBroadcastThread(host_ip, sock)
     logging.info("IP broadcast subprocess starting")
     path = os.path.join(os.path.dirname(__file__), "../sunshine2/sunshine2/bin/Debug/sunshine2.exe")
     subprocess.Popen([path])
-
-    # ip_broadcast.start()
     main_loop(host_ip, args.tcp_port)
-
-
-
-    # https://www.techbeamers.com/python-tutorial-write-multithreaded-python-server/
-    # https://stackoverflow.com/questions/10810249/python-socket-multiple-clients
-    # https://www.geeksforgeeks.org/socket-programming-multi-threading-python/
-
-
-# import socket
-# import os
-# from time import sleep
-
-# IP = os.popen('ipconfig en0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1').read()
-# PORT = 4801
-# KEY = "IDKEY"
-
-# # Create socket.
-# sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# # Bind socket.
-# sock.bind(('', 0))
-# # Configure socket.
-# sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-
-# # Server Loop.
-# while True:
-#     data = KEY+IP
-#     sock.sendto(data.encode(), ('<broadcast>', PORT))
-#     print("Sent broadcast")
-#     sleep(5)
