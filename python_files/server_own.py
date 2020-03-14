@@ -8,6 +8,7 @@ import time
 from sqlite3 import IntegrityError
 import traceback
 import sys
+import os
 import logging
 
 logging.basicConfig(
@@ -15,6 +16,35 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s %(levelname)s %(message)s'
 )
+
+
+class IPBroadcastThread(Thread):
+    """Thread for broadbasting the IP via UDP"""
+    def __init__(self, ip, sock):
+        logging.info("IPBroadcast thread init")
+        Thread.__init__(self)
+        self.host_ip = ip
+        self.udp_port = 4801
+        self.key = "IDKEY"
+        self.sock = sock
+
+    def run(self):
+        try:
+            print(self.host_ip)
+            logging.info("IP broadcast starting")
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            while True:
+                self.sock.sendto(
+                    self.host_ip.encode(),
+                    (self.host_ip, self.udp_port)
+                )
+                time.sleep(1)
+        except Exception:
+            logging.exception("Error in IP broadcast loop, killing socket")
+            self.sock.close()
+
+
+
 
 
 class ClientThread(Thread):
@@ -69,6 +99,7 @@ class ClientThread(Thread):
             print([round_results])
             print(round_results, flush=True)
         except OSError:
+            logging.exception("OSError in client thread")
             self.conn.close()
 
     def send_countdown(self, time):
@@ -76,6 +107,7 @@ class ClientThread(Thread):
         try:
             self.conn.send(f"Countdown; {time}".encode())
         except OSError:
+            logging.exception("OSError in client thread")
             self.conn.close()
 
     def get_exception(self):
@@ -90,6 +122,7 @@ class TimerThread(Thread):
         self.round_over = False
         self.exception = None
         print("Timer thread started", flush=True)
+        logging.info("init TimerThread")
 
     def run(self):
         '''sends timer in 10 sec periods'''
@@ -103,6 +136,7 @@ class TimerThread(Thread):
                             thread.send_countdown(self.time)
                     except BrokenPipeError:
                         print("pipe broken for client, closing its socket")
+                        logging.exception("BrokenPipeError exception")
                         thread.conn.close()
                     if self.time % 5 == 0:
                         print(f"Time left:{self.time}", flush=True)
@@ -113,6 +147,7 @@ class TimerThread(Thread):
             except Exception as e:
                 print("exception in timer thread", flush=True)
                 self.exception = e
+                logging.exception("TimerThread exception")
                 traceback.print_exc()
                 sys.stdout.flush()
 
@@ -126,6 +161,7 @@ class ListenForUsersThread(Thread):
         self.tcp_server = tcp_server
         self.exception = None
         Thread.__init__(self)
+        logging.info("Init ListenForUserThread")
         print("[+] New server socket thread started for listening for users", flush=True)
 
     def run(self):
@@ -142,6 +178,7 @@ class ListenForUsersThread(Thread):
 
             except Exception as e:
                 self.exception = e
+                logging.exception("Exception in ListenForUsersThread")
                 print("exception in ListenForUserThread", flush=True)
 
     def get_exception(self):
@@ -152,6 +189,7 @@ class RPSGame():
     """Server for RPS game"""
     def __init__(self):
         '''Start server'''
+        logging.info("RPSGame init")
         pass
 
     def calculate_results(self):
@@ -226,24 +264,29 @@ class RPSGame():
                         player = Player(username=data["alias"], ip=ip_address)
                         session.add(player)
                         session.commit()
-                        return "meetöihin, connect on yesyes"
+                        return "connect type msg received"
 
                 if data["msgtype"] == "play":
                     round_answers.append((data["alias"], data["answer"]))
-                    return "meetoihin, played yesyes"
+                    logging.info("play type msg received")
+                    return "play type msg"
 
         except KeyError:
             print("Missing fields in clients message", flush=True)
+            logging.exception("KeyError in RPSGame")
 
         except IndexError as e:
             print(e, flush=True)
+            logging.exception("IndexError in RPSGame")
             return "Wrong message fields"
 
         except IntegrityError:
             print("integrityerror in db")
+            logging.exception("IntegrityError RPSGame")
         except Exception as e:
             print(" error", flush=True)
             print(e, flush=True)
+            logging.exception("Exception in RPSGame")
             return "error in msg"
 
     def route_to_another_server(self):
@@ -260,7 +303,6 @@ def main_loop(tcp_ip, tcp_port):
     tcp_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     tcp_server.bind((tcp_ip, int(tcp_port)))
     logging.info("tcp_server ready")
-    session = Session()
 
     # Start timer
     global threads
@@ -283,6 +325,7 @@ def main_loop(tcp_ip, tcp_port):
     is_running = True
     while is_running:
         if timer_thread.round_over:
+            logging.info("Round ends")
             rps_game.calculate_results()
             print("Here are the round answers:", flush=True)
             print(round_answers)
@@ -291,6 +334,7 @@ def main_loop(tcp_ip, tcp_port):
             print("Here is the round results string:", flush=True)
             print(round_results)
             for thread in client_threads:
+                logging.info("Send round results to client")
                 thread.send_round_results(round_results)
             timer_thread.round_over = False
             timer_thread.time = 30
@@ -313,13 +357,17 @@ if __name__ == "__main__":
                         help='Own tcp port',
                         default=5005)
     args = parser.parse_args()
+
     logging.info("args parsed")
     atexit.register(close_socket)
     logging.info("Entering main loop")
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    host_ip = s.getsockname()[0]
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.connect(("8.8.8.8", 80))
+    host_ip = sock.getsockname()[0]
     print(host_ip)
+
+    ip_broadcast = IPBroadcastThread(host_ip, sock)
+    ip_broadcast.start()
     main_loop(host_ip, args.tcp_port)
 
 
@@ -327,3 +375,26 @@ if __name__ == "__main__":
     # https://www.techbeamers.com/python-tutorial-write-multithreaded-python-server/
     # https://stackoverflow.com/questions/10810249/python-socket-multiple-clients
     # https://www.geeksforgeeks.org/socket-programming-multi-threading-python/
+
+
+# import socket
+# import os
+# from time import sleep
+
+# IP = os.popen('ipconfig en0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1').read()
+# PORT = 4801
+# KEY = "IDKEY"
+
+# # Create socket.
+# sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# # Bind socket.
+# sock.bind(('', 0))
+# # Configure socket.
+# sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+
+# # Server Loop.
+# while True:
+#     data = KEY+IP
+#     sock.sendto(data.encode(), ('<broadcast>', PORT))
+#     print("Sent broadcast")
+#     sleep(5)
