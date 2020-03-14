@@ -4,5 +4,5 @@ A distributed Rock-Paper-Scissors game for the course 521290S Distributed System
 # Contributers:
 * Jouni Lammi - Git: jounilammi
 * Sami Rapakko - Git: LeArchitect
-* Aleksi Sierilä - Git: 
-* Olli törrönen - Git: 
+* Aleksi Sierilä - Git: asierila
+* Olli törrönen - Git: otorrone
