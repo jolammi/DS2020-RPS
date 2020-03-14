@@ -17,22 +17,23 @@ session = Session()
 class Player(Base):
     __tablename__ = 'player'
     player_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False, unique=True)
+    username = db.Column(db.String(64), nullable=False, unique=True)
     ip = db.Column(db.String(15), nullable=False, unique=True)
+    player_score = db.Column(db.Integer, default=0)
 
-    gameroom = relationship("Gameroom", back_populates="player")
+    # gameroom = relationship("Gameroom", back_populates="player")
 
 
-class Gameroom(Base):
-    __tablename__ = 'gameroom'
-    gameroom_id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(
-        db.Integer,
-        db.ForeignKey("player.player_id", ondelete="SET NULL"),
-        primary_key=True,
-    )
-    player_score = db.Column(db.Integer, nullable=False)
-    player = relationship("Player", back_populates="gameroom")
+# class Gameroom(Base):
+#     __tablename__ = 'gameroom'
+#     gameroom_id = db.Column(db.Integer, primary_key=True)
+#     player_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey("player.player_id", ondelete="SET NULL"),
+#         primary_key=True,
+#     )
+#     player_score = db.Column(db.Integer, nullable=False)
+#     player = relationship("Player", back_populates="gameroom")
 
 
 Base.metadata.create_all(bind=engine)
