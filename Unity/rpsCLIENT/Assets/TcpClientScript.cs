@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,7 +40,9 @@ public class TcpClientScript : MonoBehaviour
     public bool newCountdown = false;
     public bool newOutcome = false;
     public bool errorMessage = false;
+    public bool newUDPMessage = false;
 
+    public string UDPPackage = null;
     public string countData = null;
     public string outcomeData = null;
     public string errorData = null;
@@ -77,6 +80,22 @@ public class TcpClientScript : MonoBehaviour
         // Gets update for the ip and alias for other uses //
         alias = nameInput.GetComponent<Text>().text;
         ip = ipInput.GetComponent<Text>().text;
+
+        // UDP for getting IP address //
+        if(newUDPMessage == true)
+        {
+            try
+            {
+                GameObject.Find("ErrorText").GetComponent<Text>().text = UDPPackage;
+                ipInput.GetComponent<Text>().text = UDPPackage;
+                ip = UDPPackage;
+                newUDPMessage = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
+            }
+        }
 
         // Checks if there are new count down messages //
         if (newCountdown == true)
@@ -284,6 +303,44 @@ public class TcpClientScript : MonoBehaviour
 
         }
     }
+
+    public void Udpstarter()
+    {
+        Thread udplook = new Thread(() => Udp());
+        udplook.Start();
+    }
+
+    public void Udp()
+    {
+        while (true)
+        {
+            try
+            {
+                var Client = new UdpClient();
+                var RequestData = Encoding.ASCII.GetBytes("SomeRequestData");
+                var ServerEp = new IPEndPoint(IPAddress.Any, 0);
+
+                Client.EnableBroadcast = true;
+                Client.Send(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, 4801));
+
+                var ServerResponseData = Client.Receive(ref ServerEp);
+                var ServerResponse = Encoding.ASCII.GetString(ServerResponseData);
+
+                newUDPMessage = true;
+                UDPPackage = ServerEp.Address.ToString();
+                Debug.Log(ServerEp.Address.ToString());
+                //GameObject.Find("ErrorText").GetComponent<Text>().text = "UDP" + ServerResponse + " " + ServerEp.Address.ToString();
+
+                Client.Close();
+                Thread.CurrentThread.Abort();
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
+            }
+        }
+    }
+
 
     // Handles the Rock button //
     public void Rock()
