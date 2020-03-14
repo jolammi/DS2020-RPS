@@ -3,7 +3,7 @@
 # Python TCP Client A
 import socket
 
-host = "192.168.43.75"#socket.gethostname()
+host = "192.168.0.156"#socket.gethostname()
 port = 5005
 BUFFER_SIZE = 2000
 MESSAGE = input("tcpClientA: Enter message/ Enter exit:")
