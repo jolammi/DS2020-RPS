@@ -10,6 +10,7 @@ import traceback
 import sys
 import os
 import logging
+import subprocess
 
 logging.basicConfig(
     filename='syslog.log',
@@ -366,8 +367,12 @@ if __name__ == "__main__":
     host_ip = sock.getsockname()[0]
     print(host_ip)
 
-    ip_broadcast = IPBroadcastThread(host_ip, sock)
-    ip_broadcast.start()
+    # ip_broadcast = IPBroadcastThread(host_ip, sock)
+    logging.info("IP broadcast subprocess starting")
+    path = os.path.join(os.path.dirname(__file__), "../sunshine2/sunshine2/bin/Debug/sunshine2.exe")
+    subprocess.Popen([path])
+
+    # ip_broadcast.start()
     main_loop(host_ip, args.tcp_port)
 
 
